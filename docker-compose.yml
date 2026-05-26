@@ -1,0 +1,44 @@
+services:
+  personnel-db:
+    image: postgres:16-alpine
+    container_name: personnel-db
+    environment:
+      POSTGRES_USER: cerid
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: personnel_db
+    ports:
+      - "5434:5432"
+    volumes:
+      - personnel-db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  operation-db:
+    image: postgres:16-alpine
+    container_name: operation-db
+    environment:
+      POSTGRES_USER: cerid
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: operation_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - operation-db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq-server
+    ports:
+      - "5672:5672"   # Spring Boot'un haberleşeceği port
+      - "15672:15672" # Tarayıcıdan gireceğin Yönetim Paneli portu
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    restart: unless-stopped
+
+volumes:
+  personnel-db-data:
+  operation-db-data:
+  rabbitmq_data:

@@ -1,0 +1,35 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      # FRONTEND'İN API'YE ERİŞEBİLMESİ İÇİN GEREKLİ CORS AYARI
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            
+      routes:
+        # Personnel Service (Login uçlarına herkes erişebilmeli, filtre koymuyoruz)
+        - id: personnel-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/personnel/**
+
+        # Operation Service (Buraya GİRİŞ YASAK, AuthenticationFilter'dan geçmek zorunda)
+        - id: operation-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/operation/**
+          filters:
+            - AuthenticationFilter  # <-- BEKÇİYİ BURAYA KOYDUK
