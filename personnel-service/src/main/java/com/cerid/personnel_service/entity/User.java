@@ -67,5 +67,10 @@ public class User {
     // YENİ: Satın Alma / Finans Yetkisi
     @Column(nullable = false)
     private Boolean hasPurchasingAuthority = false;
+
+
+    // Diğer kolonların altına ekle
+    @Column(name = "hourly_wage", nullable = false)
+    private Double hourlyWage = 1000.0; // Varsayılan değer
     
 }

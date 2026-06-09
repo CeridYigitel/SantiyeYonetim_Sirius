@@ -28,7 +28,7 @@ public class DataInitializer implements CommandLineRunner {
             User admin = User.builder()
                     .username("admin")
                     .passwordHash("1234") // Gerçekte BCrypt olacak
-                    .role(Role.ADMIN).hasPurchasingAuthority(true)
+                    .role(Role.ADMIN).hasPurchasingAuthority(true).hourlyWage(2000d)
                     .build();
             userRepository.save(admin);
 
@@ -36,7 +36,7 @@ public class DataInitializer implements CommandLineRunner {
             User usta = User.builder()
                     .username("usta_ahmet")
                     .passwordHash("1234")
-                    .role(Role.FOREMAN).hasPurchasingAuthority(false)
+                    .role(Role.FOREMAN).hasPurchasingAuthority(false).hourlyWage(1000d)
                     .build();
             userRepository.save(usta);
 
@@ -49,7 +49,7 @@ public class DataInitializer implements CommandLineRunner {
             User isci = User.builder()
                     .username("isci_mehmet")
                     .passwordHash("1234")
-                    .role(Role.WORKER).hasPurchasingAuthority(false)
+                    .role(Role.WORKER).hasPurchasingAuthority(false).hourlyWage(1000d)
                     .supervisors(ustalar) // Hiyerarşiyi burada kuruyoruz!
                     .build();
             userRepository.save(isci);

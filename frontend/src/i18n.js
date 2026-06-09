@@ -57,6 +57,7 @@ const resources = {
       "username": "Kullanıcı Adı",
       "password": "Şifre",
       "password_hint": "(Aynı kalacaksa boş bırakın)",
+      "hourly_wage": "Saatlik Ücret",
       "role": "Rol",
       "auth": "Finans Yetkisi",
       "supervisors": "Bağlı Olduğu Şefler",
@@ -94,8 +95,23 @@ const resources = {
       "login_button": "Giriş Yap",
       "logging_in": "Giriş Yapılıyor...",
       "login_error": "Giriş başarısız! Kullanıcı adı veya şifre hatalı.",
-      "grand_total": "GENEL TOPLAM"
+      "menu_salary": "💰 Maaş Yönetimi",
+      "grand_total": "GENEL TOPLAM",
       
+      // MAAŞ SAYFASI YENİ TRANSLATIONS
+      "salary_calc_title": "Personel Maaş Hesaplama",
+      "calculate": "Hesapla",
+      "all_times": "Tüm Zamanlar",
+      "all_personnel_selected": "Tüm Personeller",
+      "select_site_placeholder": "Şantiye Seçin",
+      "select_personnel_placeholder": "Personel Seçin",
+      "calculated_date_range": "Hesaplanan Tarih Aralığı",
+      "personnel_name": "Personel İsmi",
+      "total_hours": "Saat Miktarı",
+      "total_wage": "Toplam Ücret",
+      "salary_click_calculate_hint": "Hesaplama yapmak için filtreleri seçip \"Hesapla\" butonuna tıklayınız.",
+      "no_data_to_download": "İndirilecek veri yok! Önce hesaplama yapınız.",
+      "download_excel_xlsx": "📊 Excel (.xlsx) İndir"
     }
   },
   en: {
@@ -153,6 +169,7 @@ const resources = {
       "username": "Username",
       "password": "Password",
       "password_hint": "(Leave blank to keep same)",
+      "hourly_wage": "Hourly Wage",
       "role": "Role",
       "auth": "Finance Auth",
       "supervisors": "Supervisors",
@@ -190,7 +207,23 @@ const resources = {
       "login_button": "Login",
       "logging_in": "Logging in...",
       "login_error": "Login failed! Incorrect username or password.",
-      "grand_total": "GRAND TOTAL"
+      "menu_salary": "💰 Salary Management",
+      "grand_total": "GRAND TOTAL",
+
+      // SALARY PAGE NEW TRANSLATIONS
+      "salary_calc_title": "Personnel Salary Calculation",
+      "calculate": "Calculate",
+      "all_times": "All Times",
+      "all_personnel_selected": "All Personnel",
+      "select_site_placeholder": "Select Site",
+      "select_personnel_placeholder": "Select Personnel",
+      "calculated_date_range": "Calculated Date Range",
+      "personnel_name": "Personnel Name",
+      "total_hours": "Total Hours",
+      "total_wage": "Total Wage",
+      "salary_click_calculate_hint": "Select filters and click 'Calculate' to see results.",
+      "no_data_to_download": "No data to download! Please calculate first.",
+      "download_excel_xlsx": "📊 Download Excel (.xlsx)"
     }
   },
   kz: {
@@ -229,7 +262,7 @@ const resources = {
       "unauthorized": "⛔ РҰҚСАТ ЖОҚ",
       "work_logs": "📋 Жұмыс жазбалары",
       "new_work_log": "+ Жаңа жазба",
-      "date": "Күн",
+      "date": "Kүн",
       "site": "Нысан",
       "personnel": "Қызметкер",
       "hours": "Сағат",
@@ -248,6 +281,7 @@ const resources = {
       "username": "Пайдаланушы аты",
       "password": "Құпиясөз",
       "password_hint": "(Өзгертпесеңіз бос қалдырыңыз)",
+      "hourly_wage": "Сағаттық жалақы",
       "role": "Рөлі",
       "auth": "Қаржы рұқсаты",
       "supervisors": "Жетекшілері",
@@ -285,7 +319,23 @@ const resources = {
       "login_button": "Кіру",
       "logging_in": "Кіруде...",
       "login_error": "Кіру қатесі! Пайдаланушы аты немесе құпиясөз қате.",
-      "grand_total": "ЖАЛПЫ ЖИЫНЫ"
+      "menu_salary": "💰 Жалақыны басқару",
+      "grand_total": "ЖАЛПЫ ЖИЫНЫ",
+
+      // SALARY PAGE NEW TRANSLATIONS
+      "salary_calc_title": "Қызметкерлердің жалақысын есептеу",
+      "calculate": "Есептеу",
+      "all_times": "Барлық уақыт",
+      "all_personnel_selected": "Барлық қызметкерлер",
+      "select_site_placeholder": "Нысанды таңдау",
+      "select_personnel_placeholder": "Қызметкерді таңдау",
+      "calculated_date_range": "Есептелген күн аралығы",
+      "personnel_name": "Қызметкердің аты",
+      "total_hours": "Сағат мөлшері",
+      "total_wage": "Жалпы жалақы",
+      "salary_click_calculate_hint": "Есептеу үшін сүзгілерді таңдап, 'Есептеу' батырмасын басыңыз.",
+      "no_data_to_download": "Жүктеп алатын дерек жоқ! Алдымен есептеуді орындаңыз.",
+      "download_excel_xlsx": "📊 Excel (.xlsx) жүктеп алу"
     }
   },
   ru: {
@@ -343,6 +393,7 @@ const resources = {
       "username": "Имя пользователя",
       "password": "Пароль",
       "password_hint": "(Оставьте пустым, чтобы не менять)",
+      "hourly_wage": "Почасовая оплата",
       "role": "Роль",
       "auth": "Фин. доступ",
       "supervisors": "Руководители (Прорабы)",
@@ -380,7 +431,23 @@ const resources = {
       "login_button": "Войти",
       "logging_in": "Вход...",
       "login_error": "Ошибка входа! Неверное имя пользователя или пароль.",
-      "grand_total": "ОБЩАЯ СУММА"
+      "menu_salary": "💰 Управление зарплатой",
+      "grand_total": "ОБЩАЯ СУММА",
+
+      // SALARY PAGE NEW TRANSLATIONS
+      "salary_calc_title": "Расчет зарплаты персонала",
+      "calculate": "Рассчитать",
+      "all_times": "Все время",
+      "all_personnel_selected": "Весь персонал",
+      "select_site_placeholder": "Выберите объект",
+      "select_personnel_placeholder": "Выберите сотрудника",
+      "calculated_date_range": "Расчетный период",
+      "personnel_name": "Имя сотрудника",
+      "total_hours": "Количество часов",
+      "total_wage": "Итого начислено",
+      "salary_click_calculate_hint": "Выберите фильтры и нажмите 'Рассчитать' для вывода результатов.",
+      "no_data_to_download": "Нет данных для скачивания! Сначала выполните расчет.",
+      "download_excel_xlsx": "📊 Скачать Excel (.xlsx)"
     }
   }
 };

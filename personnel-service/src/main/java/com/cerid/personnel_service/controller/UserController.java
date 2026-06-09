@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,6 +39,7 @@ public class UserController {
         private String role;
         private List<Long> supervisorIds;
         private Boolean hasPurchasingAuthority; // YENİ: Finans Yetkisi
+        private Double hourlyWage; // YENİ: Saatlik Ücret
     }
 
     @GetMapping("/{id:\\d+}")
@@ -47,6 +49,7 @@ public class UserController {
         map.put("id", u.getId());
         map.put("username", u.getUsername());
         map.put("hasPurchasingAuthority", u.getHasPurchasingAuthority()); // YENİ
+        map.put("hourlyWage", u.getHourlyWage()); // YENİ
         return ResponseEntity.ok(map);
     }
 
@@ -58,6 +61,7 @@ public class UserController {
             Map<String, Object> map = new HashMap<>();
             map.put("id", u.getId());
             map.put("username", u.getUsername());
+            map.put("hourlyWage", u.getHourlyWage()); // YENİ
             safeList.add(map);
         }
         return ResponseEntity.ok(safeList);
@@ -71,6 +75,7 @@ public class UserController {
             Map<String, Object> map = new HashMap<>();
             map.put("id", u.getId());
             map.put("username", u.getUsername());
+            map.put("hourlyWage", u.getHourlyWage()); // YENİ
             safeList.add(map);
         }
         return ResponseEntity.ok(safeList);
@@ -86,6 +91,7 @@ public class UserController {
             map.put("username", u.getUsername());
             map.put("role", u.getRole() != null ? u.getRole().name() : "WORKER");
             map.put("hasPurchasingAuthority", u.getHasPurchasingAuthority()); // YENİ: Listede gösterilmesi için eklendi
+            map.put("hourlyWage", u.getHourlyWage()); // YENİ
 
             List<Long> supIds = new ArrayList<>();
             if (u.getSupervisors() != null) {
@@ -110,6 +116,10 @@ public class UserController {
         boolean auth = "ADMIN".equals(request.getRole()) ? true : (request.getHasPurchasingAuthority() != null && request.getHasPurchasingAuthority());
         newUser.setHasPurchasingAuthority(auth);
 
+        if (request.getHourlyWage() != null) {
+            newUser.setHourlyWage(request.getHourlyWage());
+        }
+
         if ("WORKER".equals(request.getRole()) && request.getSupervisorIds() != null && !request.getSupervisorIds().isEmpty()) {
             List<User> supervisors = userRepository.findAllById(request.getSupervisorIds());
             newUser.setSupervisors(supervisors);
@@ -128,6 +138,10 @@ public class UserController {
         // YENİ: Finans Yetkisi Güncelleme
         boolean auth = "ADMIN".equals(request.getRole()) ? true : (request.getHasPurchasingAuthority() != null && request.getHasPurchasingAuthority());
         existing.setHasPurchasingAuthority(auth);
+
+        if (request.getHourlyWage() != null) {
+            existing.setHourlyWage(request.getHourlyWage());
+        }
 
         if (request.getPassword() != null && !request.getPassword().trim().isEmpty()) {
             existing.setPasswordHash(request.getPassword()); 
@@ -156,5 +170,25 @@ public class UserController {
         userRepository.delete(userToDelete);
         rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE, RabbitMQConfig.ROUTING_KEY, id);
         return ResponseEntity.ok(java.util.Collections.singletonMap("message", "Kullanıcı başarıyla silindi"));
+    }
+    @GetMapping("/is-subordinate")
+    public ResponseEntity<Boolean> isSubordinate(@RequestParam Long workerId, @RequestParam Long supervisorId) {
+        boolean exists = userRepository.existsByIdAndSupervisorsId(workerId, supervisorId);
+        return ResponseEntity.ok(exists);
+    }
+
+    @GetMapping("/subordinates-ids")
+    public ResponseEntity<List<Long>> getSubordinateIds(@RequestParam Long supervisorId) {
+        
+        // 1. Senin elindeki mevcut metodu kullanarak işçileri (User objelerini) çekiyoruz
+        List<User> subordinates = userRepository.findBySupervisorsId(supervisorId);
+        
+        // 2. Sadece ID'leri filtreleyip (map) yeni bir listeye çeviriyoruz
+        List<Long> subordinateIds = subordinates.stream()
+                .map(User::getId)
+                .collect(Collectors.toList());
+                
+        // 3. Operation servise istediği ID listesini yolluyoruz
+        return ResponseEntity.ok(subordinateIds);
     }
 }

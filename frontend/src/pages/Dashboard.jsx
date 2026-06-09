@@ -8,17 +8,17 @@ import FinanceManager from '../components/FinanceManager';
 import InventoryManager from '../components/InventoryManager';
 import PersonnelManager from '../components/PersonnelManager';
 import ProgressBillingManager from '../components/ProgressBillingManager';
+import SalaryManager from '../components/SalaryManager'; // YENİ IMPORT
 import SiteManager from '../components/SiteManager';
 import WorkLogTable from '../components/WorkLogTable';
 
-// LOGO IMPORTU
 import logo from '../assets/sirius-logo.png';
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [activeView, setActiveView] = useState('dashboard');
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // YENİ: Mobil menü state'i
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t, i18n } = useTranslation();
 
   useEffect(() => {
@@ -61,7 +61,6 @@ export default function Dashboard() {
     i18n.changeLanguage(e.target.value);
   };
 
-  // Mobil menüden bir sekmeye tıklanınca menüyü otomatik kapat
   const handleNavClick = (view) => {
     setActiveView(view);
     setIsMobileMenuOpen(false);
@@ -72,7 +71,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-slate-100 p-4 md:p-8 relative isolate">
       
-      {/* 1. ARKA PLAN FİLİGRAN LOGO */}
+      {/* ARKA PLAN FİLİGRAN LOGO */}
       <div 
         className="fixed inset-0 pointer-events-none z-[-1] opacity-[0.10] flex items-center justify-center p-8 md:p-24"
         style={{
@@ -86,7 +85,6 @@ export default function Dashboard() {
       {/* ÜST BAR (Navbar) */}
       <div className="max-w-[100%] mx-auto bg-[#ada499] rounded-xl shadow-sm p-4 flex justify-between items-center mb-6 md:mb-8 border-b-4 border-black relative z-50">
         
-        {/* LOGO VE BAŞLIK ALANI */}
         <div className="flex items-center gap-2 md:gap-3">
           <img src={logo} alt="Sirius Stroy" className="h-8 md:h-10 w-auto object-contain select-none" />
           <h1 className="text-lg md:text-xl font-black text-slate-800 truncate max-w-[150px] md:max-w-none">
@@ -94,11 +92,12 @@ export default function Dashboard() {
              activeView === 'sites' ? t('menu_sites') : 
              activeView === 'finance' ? t('menu_finance') : 
              activeView === 'hakedis' ? t('menu_hakedis') : 
+             activeView === 'salary' ? t('menu_salary') : // YENİ BAŞLIK
              t('app_title')}
           </h1>
         </div>
         
-        {/* MASAÜSTÜ MENÜ (Mobilde gizli: hidden md:flex) */}
+        {/* MASAÜSTÜ MENÜ */}
         <div className="hidden md:flex items-center gap-4">
           <div className="flex gap-2">
             <button onClick={() => handleNavClick('dashboard')} className={`px-4 py-2 rounded-lg font-bold text-sm border transition ${activeView === 'dashboard' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}>{t('menu_dashboard')}</button>
@@ -108,6 +107,8 @@ export default function Dashboard() {
                 <button onClick={() => handleNavClick('personnel')} className={`px-4 py-2 rounded-lg font-bold text-sm border transition ${activeView === 'personnel' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}>{t('menu_personnel')}</button>
                 <button onClick={() => handleNavClick('sites')} className={`px-4 py-2 rounded-lg font-bold text-sm border transition ${activeView === 'sites' ? 'bg-amber-600 text-white border-amber-600' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}>{t('menu_sites')}</button>
                 <button onClick={() => handleNavClick('hakedis')} className={`px-4 py-2 rounded-lg font-bold text-sm border transition ${activeView === 'hakedis' ? 'bg-cyan-600 text-white border-cyan-600' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}>{t('menu_hakedis')}</button>
+                {/* YENİ MASAÜSTÜ MAAŞ BUTONU */}
+                <button onClick={() => handleNavClick('salary')} className={`px-4 py-2 rounded-lg font-bold text-sm border transition ${activeView === 'salary' ? 'bg-purple-600 text-white border-purple-600' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}>{t('menu_salary')}</button>
               </>
             )}
 
@@ -118,20 +119,17 @@ export default function Dashboard() {
 
           <div className="text-right border-l pl-4 border-black/10 flex items-center gap-4">
             <select className="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-lg px-2 py-1.5 focus:outline-none focus:border-blue-500" value={i18n.language} onChange={changeLanguage}>
-              <option value="tr">🇹🇷 TR</option>
-              <option value="en">🇬🇧 EN</option>
-              <option value="kz">🇰🇿 KZ</option>
-              <option value="ru">🇷🇺 RU</option>
+              <option value="tr">🇹🇷 TR</option><option value="en">🇬🇧 EN</option><option value="kz">🇰🇿 KZ</option><option value="ru">🇷🇺 RU</option>
             </select>
             <div>
               <p className="text-sm font-black text-slate-900">{user.sub}</p>
-              <p className="text-xs font-bold text-slate-800">{user.role} {user.hasPurchasingAuthority && <span className="text-slate-800 text-[10px] ml-1">{t('finance_auth')}</span>}</p>
+              <p className="text-xs font-bold text-slate-800">{user.role}</p>
             </div>
             <button onClick={handleLogout} className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition font-black text-sm shadow-sm">{t('logout')}</button>
           </div>
         </div>
 
-        {/* MOBİL HAMBURGER BUTONU (Masaüstünde gizli: md:hidden) */}
+        {/* MOBİL HAMBURGER BUTONU */}
         <div className="md:hidden flex items-center gap-3">
           <select className="bg-white border-none text-slate-800 text-xs font-black rounded px-1 py-1 outline-none" value={i18n.language} onChange={changeLanguage}>
             <option value="tr">TR</option><option value="en">EN</option><option value="kz">KZ</option><option value="ru">RU</option>
@@ -142,9 +140,9 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* MOBİL AÇILIR MENÜ (Sadece butona basılınca ve mobilde görünür) */}
+      {/* MOBİL AÇILIR MENÜ */}
       {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-24 left-4 right-4 bg-white rounded-xl shadow-2xl z-50 border border-slate-200 overflow-hidden flex flex-col animate-fadeIn">
+        <div className="md:hidden absolute top-24 left-4 right-4 bg-white rounded-xl shadow-2xl z-50 border border-slate-200 overflow-hidden flex flex-col">
           <div className="p-4 bg-slate-50 border-b flex justify-between items-center">
             <div>
               <p className="text-sm font-black text-slate-900">{user.sub}</p>
@@ -159,6 +157,8 @@ export default function Dashboard() {
                 <button onClick={() => handleNavClick('personnel')} className={`text-left px-4 py-3 rounded-lg font-bold text-sm ${activeView === 'personnel' ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600'}`}>{t('menu_personnel')}</button>
                 <button onClick={() => handleNavClick('sites')} className={`text-left px-4 py-3 rounded-lg font-bold text-sm ${activeView === 'sites' ? 'bg-amber-50 text-amber-700' : 'text-slate-600'}`}>{t('menu_sites')}</button>
                 <button onClick={() => handleNavClick('hakedis')} className={`text-left px-4 py-3 rounded-lg font-bold text-sm ${activeView === 'hakedis' ? 'bg-cyan-50 text-cyan-700' : 'text-slate-600'}`}>{t('menu_hakedis')}</button>
+                {/* YENİ MOBİL MAAŞ BUTONU */}
+                <button onClick={() => handleNavClick('salary')} className={`text-left px-4 py-3 rounded-lg font-bold text-sm ${activeView === 'salary' ? 'bg-purple-50 text-purple-700' : 'text-slate-600'}`}>{t('menu_salary')}</button>
               </>
             )}
             {(user.role === 'ADMIN' || user.hasPurchasingAuthority) && (
@@ -174,15 +174,13 @@ export default function Dashboard() {
         {activeView === 'sites' && <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"><SiteManager /></div>}
         {activeView === 'finance' && <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"><FinanceManager /></div>}
         {activeView === 'hakedis' && <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"><ProgressBillingManager /></div>}
+        {/* YENİ BİLEŞENİN EKRANA BASILMASI */}
+        {activeView === 'salary' && <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"><SalaryManager /></div>}
 
         {activeView === 'dashboard' && (
           <div className="flex flex-col gap-6 md:gap-8">
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden w-full">
-              <WorkLogTable />
-            </div>
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden w-full">
-              <InventoryManager />
-            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden w-full"><WorkLogTable /></div>
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden w-full"><InventoryManager /></div>
           </div>
         )}
       </div>

@@ -23,6 +23,8 @@ public class GlobalExceptionHandler {
         body.put("error", "Bad Request");
         body.put("message", ex.getMessage()); // Bizim yazdığımız o güzel mesaj
         body.put("path", request.getDescription(false).replace("uri=", ""));
+        System.err.println("🔴 BEKLENMEYEN HATA / BAD REQUEST DETAYI:");
+        ex.printStackTrace();
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }

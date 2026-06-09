@@ -13,7 +13,8 @@ export default function PersonnelManager() {
   const [editMode, setEditMode] = useState(false);
   const [currentEditingId, setCurrentEditingId] = useState(null);
   
-  const [formData, setFormData] = useState({ username: '', password: '', role: 'WORKER', supervisorIds: [], hasPurchasingAuthority: false });
+  // YENİ: formData içine hourlyWage varsayılan olarak 1000 eklendi
+  const [formData, setFormData] = useState({ username: '', password: '', role: 'WORKER', supervisorIds: [], hasPurchasingAuthority: false, hourlyWage: 1000 });
 
   const loadData = async () => {
     setLoading(true);
@@ -55,10 +56,19 @@ export default function PersonnelManager() {
   const handleOpenModal = (user = null) => {
     if (user) {
       setEditMode(true); setCurrentEditingId(user.id);
-      setFormData({ username: user.username, password: '', role: user.role, supervisorIds: user.supervisorIds || [], hasPurchasingAuthority: user.hasPurchasingAuthority || false });
+      // YENİ: Edit modunda kullanıcının saatlik ücreti yoksa 1000 ata
+      setFormData({ 
+        username: user.username, 
+        password: '', 
+        role: user.role, 
+        supervisorIds: user.supervisorIds || [], 
+        hasPurchasingAuthority: user.hasPurchasingAuthority || false,
+        hourlyWage: user.hourlyWage || 1000
+      });
     } else {
       setEditMode(false); setCurrentEditingId(null);
-      setFormData({ username: '', password: '', role: 'WORKER', supervisorIds: [], hasPurchasingAuthority: false });
+      // YENİ: Yeni kayıtta varsayılan 1000 ata
+      setFormData({ username: '', password: '', role: 'WORKER', supervisorIds: [], hasPurchasingAuthority: false, hourlyWage: 1000 });
     }
     setIsModalOpen(true);
   };
@@ -75,10 +85,20 @@ export default function PersonnelManager() {
     e.preventDefault();
     const token = localStorage.getItem('token');
     try {
-      const payload = { username: formData.username, role: formData.role, supervisorIds: formData.role === 'WORKER' ? formData.supervisorIds.map(id => parseInt(id)) : [], hasPurchasingAuthority: formData.role === 'ADMIN' ? true : formData.hasPurchasingAuthority };
+      // YENİ: Payload içine hourlyWage float olarak eklendi
+      const payload = { 
+        username: formData.username, 
+        role: formData.role, 
+        supervisorIds: formData.role === 'WORKER' ? formData.supervisorIds.map(id => parseInt(id)) : [], 
+        hasPurchasingAuthority: formData.role === 'ADMIN' ? true : formData.hasPurchasingAuthority,
+        hourlyWage: parseFloat(formData.hourlyWage) || 1000
+      };
+      
       if (!editMode || (editMode && formData.password)) payload.password = formData.password;
+      
       if (editMode) await axios.put(`http://localhost:8080/api/personnel/users/admin/${currentEditingId}`, payload, { headers: { Authorization: `Bearer ${token}` } });
       else await axios.post('http://localhost:8080/api/personnel/users/admin/create', payload, { headers: { Authorization: `Bearer ${token}` } });
+      
       setIsModalOpen(false); loadData();
     } catch (err) {}
   };
@@ -108,6 +128,8 @@ export default function PersonnelManager() {
               <th className="px-4 py-4">ID</th>
               <th className="px-4 py-4">{t('username')}</th>
               <th className="px-4 py-4">{t('role')}</th>
+              {/* YENİ KOLON BAŞLIĞI */}
+              <th className="px-4 py-4">{t('hourly_wage', 'SAATLİK (₸)')}</th>
               <th className="px-4 py-4">{t('auth')}</th>
               <th className="px-4 py-4">{t('supervisors')}</th>
               <th className="px-4 py-4">{t('assigned_sites')}</th>
@@ -120,6 +142,12 @@ export default function PersonnelManager() {
                 <td className="px-4 py-4 font-black text-slate-400">#{u.id}</td>
                 <td className="px-4 py-4 font-bold text-slate-800">{u.username}</td>
                 <td className="px-4 py-4"><span className={`px-3 py-1 rounded-full text-[10px] font-black border ${u.role === 'ADMIN' ? 'bg-purple-100 text-purple-700' : u.role === 'FOREMAN' ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700'}`}>{t(u.role.toLowerCase())}</span></td>
+                
+                {/* YENİ KOLON VERİSİ */}
+                <td className="px-4 py-4 font-bold text-emerald-600 whitespace-nowrap">
+                  {u.hourlyWage ? `${u.hourlyWage} ₸` : '1000 ₸'}
+                </td>
+
                 <td className="px-4 py-4">
                   {u.hasPurchasingAuthority ? (
                     <div className="flex items-center gap-1.5 text-emerald-600 font-bold bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 w-max shadow-sm"><span className="text-xs tracking-wider">{t('active')}</span></div>
@@ -158,6 +186,22 @@ export default function PersonnelManager() {
                   <option value="ADMIN">{t('admin')}</option>
                 </select>
               </div>
+
+              {/* YENİ: SAATLİK ÜCRET INPUT'U */}
+              <div>
+                <label className="block text-xs font-black uppercase text-slate-500 mb-2">{t('hourly_wage', 'Saatlik Ücret (Tenge)')} *</label>
+                <input 
+                  type="number" 
+                  required
+                  min="0"
+                  step="0.01"
+                  className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:outline-none focus:border-blue-500 transition-all font-bold text-slate-800"
+                  value={formData.hourlyWage}
+                  onChange={(e) => setFormData({...formData, hourlyWage: e.target.value})}
+                  placeholder="1000"
+                />
+              </div>
+
               <div className="bg-indigo-50 border border-indigo-100 p-4 rounded-xl flex items-center gap-3">
                 <input type="checkbox" id="authCheck" className="w-5 h-5 text-indigo-600 rounded border-indigo-300" checked={formData.role === 'ADMIN' ? true : formData.hasPurchasingAuthority} disabled={formData.role === 'ADMIN'} onChange={(e) => setFormData({...formData, hasPurchasingAuthority: e.target.checked})} />
                 <div>
@@ -192,4 +236,4 @@ export default function PersonnelManager() {
       )}
     </div>
   );
-}
+} 
