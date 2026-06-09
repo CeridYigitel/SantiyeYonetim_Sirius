@@ -20,8 +20,8 @@ export default function SiteManager() {
     try {
       const token = localStorage.getItem('token');
       const [sitesRes, usersRes] = await Promise.all([
-        axios.get('http://localhost:8080/api/operation/sites', { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get('http://localhost:8080/api/personnel/users/admin/all', { headers: { Authorization: `Bearer ${token}` } })
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/operation/sites`, { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/personnel/users/admin/all`, { headers: { Authorization: `Bearer ${token}` } })
       ]);
       setSites(sitesRes.data);
       setUsers(usersRes.data);
@@ -39,8 +39,8 @@ export default function SiteManager() {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      if (editId) await axios.put(`http://localhost:8080/api/operation/sites/${editId}`, formData, { headers: { Authorization: `Bearer ${token}` } });
-      else await axios.post('http://localhost:8080/api/operation/sites', formData, { headers: { Authorization: `Bearer ${token}` } });
+      if (editId) await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/operation/sites/${editId}`, formData, { headers: { Authorization: `Bearer ${token}` } });
+      else await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/operation/sites`, formData, { headers: { Authorization: `Bearer ${token}` } });
       setIsModalOpen(false);
       setSearchTerm(''); 
       loadData();
@@ -51,7 +51,7 @@ export default function SiteManager() {
     if (!window.confirm("Bu şantiyeyi silmek istediğinize emin misiniz?")) return;
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:8080/api/operation/sites/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/operation/sites/${id}`, { headers: { Authorization: `Bearer ${token}` } });
       loadData();
     } catch (err) { alert("Silinemedi."); }
   };

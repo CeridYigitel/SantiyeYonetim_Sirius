@@ -23,9 +23,9 @@ export default function FinanceManager() {
     try {
       const token = localStorage.getItem('token');
       const [financeRes, sitesRes, usersRes] = await Promise.all([
-        axios.get('http://localhost:8080/api/operation/finance', { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get('http://localhost:8080/api/operation/sites', { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get('http://localhost:8080/api/personnel/users/admin/all', { headers: { Authorization: `Bearer ${token}` } })
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/operation/finance`, { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/operation/sites`, { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/personnel/users/admin/all`, { headers: { Authorization: `Bearer ${token}` } })
       ]);
       setRecords(financeRes.data); setSites(sitesRes.data); setUsers(usersRes.data);
     } catch (err) {} finally { setLoading(false); }
@@ -47,7 +47,7 @@ export default function FinanceManager() {
     e.preventDefault();
     const token = localStorage.getItem('token');
     try {
-      await axios.post('http://localhost:8080/api/operation/finance', { ...formData, userId: parseInt(formData.userId), siteId: parseInt(formData.siteId), income: parseFloat(formData.income), expense: parseFloat(formData.expense) }, { headers: { Authorization: `Bearer ${token}`, 'X-User-Role': userRole } });
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/operation/finance`, { ...formData, userId: parseInt(formData.userId), siteId: parseInt(formData.siteId), income: parseFloat(formData.income), expense: parseFloat(formData.expense) }, { headers: { Authorization: `Bearer ${token}`, 'X-User-Role': userRole } });
       setIsModalOpen(false);
       setFormData({ transactionDate: new Date().toISOString().split('T')[0], userId: '', description: '', siteId: '', income: 0, expense: 0 });
       loadData();
@@ -61,7 +61,7 @@ export default function FinanceManager() {
       let queryParams = [];
       if (!exportData.allDates) { queryParams.push(`startDate=${exportData.startDate}`); queryParams.push(`endDate=${exportData.endDate}`); }
       if (exportData.siteId !== 'all') queryParams.push(`siteId=${exportData.siteId}`);
-      const url = `http://localhost:8080/api/operation/finance/export?${queryParams.join('&')}`;
+      const url = `${import.meta.env.VITE_API_BASE_URL}/api/operation/finance/export?${queryParams.join('&')}`;
       const response = await axios.get(url, { headers: { Authorization: `Bearer ${token}` }, responseType: 'blob' });
       const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       const downloadUrl = window.URL.createObjectURL(blob);
@@ -74,7 +74,7 @@ export default function FinanceManager() {
     if (!window.confirm("Emin misiniz?")) return;
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:8080/api/operation/finance/${id}`, { headers: { Authorization: `Bearer ${token}`, 'X-User-Role': userRole } });
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/operation/finance/${id}`, { headers: { Authorization: `Bearer ${token}`, 'X-User-Role': userRole } });
       loadData();
     } catch (err) {}
   };

@@ -26,8 +26,8 @@ export default function ProgressBillingManager() {
     const token = localStorage.getItem('token');
     try {
       const [recRes, sitesRes] = await Promise.all([
-        axios.get('http://localhost:8080/api/operation/hakedis', { headers: { Authorization: `Bearer ${token}`, 'X-User-Role': 'ADMIN' } }),
-        axios.get('http://localhost:8080/api/operation/sites', { headers: { Authorization: `Bearer ${token}` } })
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/operation/hakedis`, { headers: { Authorization: `Bearer ${token}`, 'X-User-Role': 'ADMIN' } }),
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/operation/sites`, { headers: { Authorization: `Bearer ${token}` } })
       ]);
       setRecords(recRes.data);
       setSites(sitesRes.data);
@@ -54,8 +54,8 @@ export default function ProgressBillingManager() {
     const token = localStorage.getItem('token');
     try {
       const headers = { Authorization: `Bearer ${token}`, 'X-User-Role': 'ADMIN' };
-      if (editId) await axios.put(`http://localhost:8080/api/operation/hakedis/${editId}`, formData, { headers });
-      else await axios.post('http://localhost:8080/api/operation/hakedis', formData, { headers });
+      if (editId) await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/operation/hakedis/${editId}`, formData, { headers });
+      else await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/operation/hakedis`, formData, { headers });
       setIsModalOpen(false); loadData();
     } catch (err) { alert("Hata oluştu."); }
   };
@@ -68,7 +68,7 @@ export default function ProgressBillingManager() {
       if (!exportData.allDates) { queryParams.push(`startDate=${exportData.startDate}`); queryParams.push(`endDate=${exportData.endDate}`); }
       if (exportData.siteId !== 'all') queryParams.push(`siteId=${exportData.siteId}`);
       
-      const response = await axios.get(`http://localhost:8080/api/operation/hakedis/export?${queryParams.join('&')}`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/operation/hakedis/export?${queryParams.join('&')}`, {
         headers: { Authorization: `Bearer ${token}` }, responseType: 'blob'
       });
       const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
@@ -83,7 +83,7 @@ export default function ProgressBillingManager() {
   const handleDelete = async (id) => {
     if (!window.confirm("Emin misiniz?")) return;
     try {
-      await axios.delete(`http://localhost:8080/api/operation/hakedis/${id}`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}`, 'X-User-Role': 'ADMIN' } });
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/operation/hakedis/${id}`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}`, 'X-User-Role': 'ADMIN' } });
       loadData();
     } catch (err) {}
   };
@@ -159,13 +159,11 @@ export default function ProgressBillingManager() {
         </table>
       </div>
 
-      {/* Excel Modalı */}
       {isExportModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl p-8 w-full max-w-md">
             <h3 className="font-black text-xl mb-6">{t('export_options')}</h3>
             <form onSubmit={handleExportSubmit} className="space-y-4">
-               {/* Standart Excel Form Mantığı */}
                <div className="bg-slate-50 p-4 rounded-xl border">
                 <label className="flex items-center gap-2 cursor-pointer text-xs font-black text-emerald-600 mb-3">
                   <input type="checkbox" checked={exportData.allDates} onChange={(e) => setExportData({...exportData, allDates: e.target.checked})} /> {t('all_dates')}
@@ -187,7 +185,6 @@ export default function ProgressBillingManager() {
         </div>
       )}
 
-      {/* Kayıt Modalı */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -202,7 +199,6 @@ export default function ProgressBillingManager() {
                 <div><label className="block text-xs font-black uppercase text-slate-500 mb-1">{t('unit')}</label><input type="text" required className="w-full px-3 py-2 border rounded-xl" value={formData.unit} onChange={(e) => setFormData({...formData, unit: e.target.value})} /></div>
               </div>
 
-              {/* OTOMATİK HESAPLANAN MALZEME BÖLÜMÜ */}
               <div className="bg-orange-50 p-4 rounded-xl border border-orange-100">
                 <h4 className="text-orange-800 font-black mb-3">📦 Malzeme Verileri</h4>
                 <div className="grid grid-cols-3 gap-3">
@@ -212,7 +208,6 @@ export default function ProgressBillingManager() {
                 </div>
               </div>
 
-              {/* OTOMATİK HESAPLANAN İŞÇİLİK BÖLÜMÜ */}
               <div className="bg-cyan-50 p-4 rounded-xl border border-cyan-100">
                 <h4 className="text-cyan-800 font-black mb-3">👷‍♂️ İşçilik Verileri</h4>
                 <div className="grid grid-cols-3 gap-3">
@@ -222,7 +217,6 @@ export default function ProgressBillingManager() {
                 </div>
               </div>
 
-              {/* GENEL TOPLAM */}
               <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-200 flex justify-between items-center">
                 <span className="font-black text-emerald-800 uppercase tracking-widest">{t('grand_total')}</span>
                 <span className="text-2xl font-black text-emerald-600">{totals.grandTotal.toFixed(2)} ₸</span>

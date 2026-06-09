@@ -52,7 +52,7 @@ export default function WorkLogTable() {
       
       let realUsername = `ID: ${currentUserId}`; 
       try {
-        const meResponse = await axios.get(`http://localhost:8080/api/personnel/users/${currentUserId}`, { headers: { Authorization: `Bearer ${token}` }});
+        const meResponse = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/personnel/users/${currentUserId}`, { headers: { Authorization: `Bearer ${token}` }});
         realUsername = meResponse.data.username; 
       } catch (err) {}
 
@@ -60,8 +60,8 @@ export default function WorkLogTable() {
 
       try {
         const [typesRes, sitesRes] = await Promise.all([
-          axios.get('http://localhost:8080/api/operation/work-logs/types', { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get('http://localhost:8080/api/operation/sites', { headers: { Authorization: `Bearer ${token}` } })
+          axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/operation/work-logs/types`, { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/operation/sites`, { headers: { Authorization: `Bearer ${token}` } })
         ]);
         setWorkTypes(typesRes.data); 
         setSites(sitesRes.data);
@@ -71,8 +71,8 @@ export default function WorkLogTable() {
         setAvailableWorkers([{ id: currentUserId, username: realUsername }]);
       } else {
         const endpoint = currentUserRole === 'ADMIN' 
-          ? 'http://localhost:8080/api/personnel/users/all-users'
-          : `http://localhost:8080/api/personnel/users/my-subordinates?supervisorId=${currentUserId}`;
+          ? `${import.meta.env.VITE_API_BASE_URL}/api/personnel/users/all-users`
+          : `${import.meta.env.VITE_API_BASE_URL}/api/personnel/users/my-subordinates?supervisorId=${currentUserId}`;
         try {
           const workerResponse = await axios.get(endpoint, { headers: { Authorization: `Bearer ${token}` } });
           const filteredWorkers = workerResponse.data.filter(w => String(w.id) !== String(currentUserId));
@@ -87,7 +87,7 @@ export default function WorkLogTable() {
 
   const loadLogs = async (userId, role, token) => {
     try {
-      const logResponse = await axios.get('http://localhost:8080/api/operation/work-logs', { headers: { Authorization: `Bearer ${token}`, 'X-User-Id': String(userId), 'X-User-Role': role } });
+      const logResponse = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/operation/work-logs`, { headers: { Authorization: `Bearer ${token}`, 'X-User-Id': String(userId), 'X-User-Role': role } });
       setLogs(logResponse.data);
     } catch (err) { setError("Kayıtlar çekilemedi."); }
   };
@@ -105,7 +105,7 @@ export default function WorkLogTable() {
       }
       if (exportData.siteId !== 'all') queryParams.push(`siteId=${exportData.siteId}`);
 
-      const url = `http://localhost:8080/api/operation/work-logs/export?${queryParams.join('&')}`;
+      const url = `${import.meta.env.VITE_API_BASE_URL}/api/operation/work-logs/export?${queryParams.join('&')}`;
       const response = await axios.get(url, { headers: { Authorization: `Bearer ${token}` }, responseType: 'blob' });
       const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       const downloadUrl = window.URL.createObjectURL(blob);
@@ -133,7 +133,7 @@ export default function WorkLogTable() {
     if (!window.confirm("Bu iş kaydını silmek istediğinize emin misiniz?")) return;
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:8080/api/operation/work-logs/${id}`, { headers: { Authorization: `Bearer ${token}`, 'X-User-Id': String(user.id), 'X-User-Role': user.role } });
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/operation/work-logs/${id}`, { headers: { Authorization: `Bearer ${token}`, 'X-User-Id': String(user.id), 'X-User-Role': user.role } });
       loadLogs(user.id, user.role, token); 
     } catch (err) { alert("Kayıt silinirken bir hata oluştu."); }
   };
@@ -149,8 +149,8 @@ export default function WorkLogTable() {
       };
       const headers = { Authorization: `Bearer ${token}`, 'X-User-Id': String(user.id), 'X-User-Role': user.role };
 
-      if (editId) await axios.put(`http://localhost:8080/api/operation/work-logs/${editId}`, payload, { headers });
-      else await axios.post('http://localhost:8080/api/operation/work-logs', payload, { headers });
+      if (editId) await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/operation/work-logs/${editId}`, payload, { headers });
+      else await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/operation/work-logs`, payload, { headers });
 
       setIsModalOpen(false);
       loadLogs(user.id, user.role, token); 

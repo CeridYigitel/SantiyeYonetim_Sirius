@@ -23,23 +23,23 @@ export default function InventoryManager() {
     try {
       const decoded = jwtDecode(token);
       setUserContext({ id: decoded.sub, role: decoded.role });
-      const sitesRes = await axios.get('http://localhost:8080/api/operation/sites', { headers: { Authorization: `Bearer ${token}` } });
+      const sitesRes = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/operation/sites`, { headers: { Authorization: `Bearer ${token}` } });
       setSites(sitesRes.data);
       let allowedUsers = [];
       if (decoded.role === 'ADMIN') {
-        const usersRes = await axios.get('http://localhost:8080/api/personnel/users/admin/all', { headers: { Authorization: `Bearer ${token}` } });
+        const usersRes = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/personnel/users/admin/all`, { headers: { Authorization: `Bearer ${token}` } });
         allowedUsers = usersRes.data;
       } else if (decoded.role === 'FOREMAN') {
-        const subRes = await axios.get(`http://localhost:8080/api/personnel/users/my-subordinates?supervisorId=${decoded.sub}`, { headers: { Authorization: `Bearer ${token}` } });
-        const meRes = await axios.get(`http://localhost:8080/api/personnel/users/${decoded.sub}`, { headers: { Authorization: `Bearer ${token}` } });
+        const subRes = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/personnel/users/my-subordinates?supervisorId=${decoded.sub}`, { headers: { Authorization: `Bearer ${token}` } });
+        const meRes = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/personnel/users/${decoded.sub}`, { headers: { Authorization: `Bearer ${token}` } });
         allowedUsers = [meRes.data, ...subRes.data];
       } else {
-        const meRes = await axios.get(`http://localhost:8080/api/personnel/users/${decoded.sub}`, { headers: { Authorization: `Bearer ${token}` } });
+        const meRes = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/personnel/users/${decoded.sub}`, { headers: { Authorization: `Bearer ${token}` } });
         allowedUsers = [meRes.data];
       }
       setVisibleUsers(allowedUsers);
       const userIdsParam = allowedUsers.map(u => u.id).join(',');
-      const invUrl = decoded.role === 'ADMIN' ? 'http://localhost:8080/api/operation/inventory' : `http://localhost:8080/api/operation/inventory/by-users?userIds=${userIdsParam}`;
+      const invUrl = decoded.role === 'ADMIN' ? `${import.meta.env.VITE_API_BASE_URL}/api/operation/inventory` : `${import.meta.env.VITE_API_BASE_URL}/api/operation/inventory/by-users?userIds=${userIdsParam}`;
       const invRes = await axios.get(invUrl, { headers: { Authorization: `Bearer ${token}`, 'X-User-Role': decoded.role } });
       setInventories(invRes.data);
     } catch (err) {} finally { setLoading(false); }
@@ -63,8 +63,8 @@ export default function InventoryManager() {
     try {
       const payload = { ...formData, siteId: parseInt(formData.siteId), quantity: parseInt(formData.quantity), assignedUserId: parseInt(formData.assignedUserId) };
       const headers = { Authorization: `Bearer ${token}`, 'X-User-Role': userContext.role };
-      if (editId) await axios.put(`http://localhost:8080/api/operation/inventory/${editId}`, payload, { headers });
-      else await axios.post('http://localhost:8080/api/operation/inventory', payload, { headers });
+      if (editId) await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/operation/inventory/${editId}`, payload, { headers });
+      else await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/operation/inventory`, payload, { headers });
       setIsModalOpen(false); loadData();
     } catch (err) {}
   };
@@ -73,7 +73,7 @@ export default function InventoryManager() {
     if (!window.confirm("Emin misiniz?")) return;
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:8080/api/operation/inventory/${id}`, { headers: { Authorization: `Bearer ${token}`, 'X-User-Role': userContext.role } });
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/operation/inventory/${id}`, { headers: { Authorization: `Bearer ${token}`, 'X-User-Role': userContext.role } });
       loadData();
     } catch (err) {}
   };
