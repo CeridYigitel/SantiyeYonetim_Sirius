@@ -98,7 +98,6 @@ const resources = {
       "menu_salary": "💰 Maaş Yönetimi",
       "grand_total": "GENEL TOPLAM",
       
-      // MAAŞ SAYFASI YENİ TRANSLATIONS
       "salary_calc_title": "Personel Maaş Hesaplama",
       "calculate": "Hesapla",
       "all_times": "Tüm Zamanlar",
@@ -210,7 +209,6 @@ const resources = {
       "menu_salary": "💰 Salary Management",
       "grand_total": "GRAND TOTAL",
 
-      // SALARY PAGE NEW TRANSLATIONS
       "salary_calc_title": "Personnel Salary Calculation",
       "calculate": "Calculate",
       "all_times": "All Times",
@@ -255,7 +253,7 @@ const resources = {
       "filter_site": "Нысан бойынша сүзу",
       "export_options": "📊 Экспорттау опциялары",
       "start": "Басталу",
-      "end": "Аяқталу",
+      "end": "Aяқталу",
       "active": "БЕЛСЕНДІ",
       "none": "ЖОҚ",
       "search_personnel": "🔍 Іздеу...",
@@ -322,7 +320,6 @@ const resources = {
       "menu_salary": "💰 Жалақыны басқару",
       "grand_total": "ЖАЛПЫ ЖИЫНЫ",
 
-      // SALARY PAGE NEW TRANSLATIONS
       "salary_calc_title": "Қызметкерлердің жалақысын есептеу",
       "calculate": "Есептеу",
       "all_times": "Барлық уақыт",
@@ -334,8 +331,8 @@ const resources = {
       "total_hours": "Сағат мөлшері",
       "total_wage": "Жалпы жалақы",
       "salary_click_calculate_hint": "Есептеу үшін сүзгілерді таңдап, 'Есептеу' батырмасын басыңыз.",
-      "no_data_to_download": "Жүктеп алатын дерек жоқ! Алдымен есептеуді орындаңыз.",
-      "download_excel_xlsx": "📊 Excel (.xlsx) жүктеп алу"
+      "no_data_to_download": "Жүктеп алатын derek жоқ! Алдымен есептеуді орындаңыз.",
+      "download_excel_xlsx": "📊 Download Excel (.xlsx)"
     }
   },
   ru: {
@@ -434,7 +431,6 @@ const resources = {
       "menu_salary": "💰 Управление зарплатой",
       "grand_total": "ОБЩАЯ СУММА",
 
-      // SALARY PAGE NEW TRANSLATIONS
       "salary_calc_title": "Расчет зарплаты персонала",
       "calculate": "Рассчитать",
       "all_times": "Все время",

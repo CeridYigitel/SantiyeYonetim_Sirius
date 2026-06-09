@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import * as XLSX from 'xlsx';
 
 export default function SalaryManager() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation(); // Sihirli dokunuş: i18n artık tanımlı!
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -37,9 +37,9 @@ export default function SalaryManager() {
         setIsAdmin(true);
 
         const [usersRes, sitesRes, logsRes] = await Promise.all([
-          axios.get('http://localhost:8080/api/personnel/users/admin/all', { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get('http://localhost:8080/api/operation/sites', { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get('http://localhost:8080/api/operation/work-logs', { headers: { Authorization: `Bearer ${token}` } })
+          axios.get('http://34.159.241.60/api/personnel/users/admin/all', { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get('http://34.159.241.60/api/operation/sites', { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get('http://34.159.241.60/api/operation/work-logs', { headers: { Authorization: `Bearer ${token}` } })
         ]);
 
         setUsers(usersRes.data);
@@ -154,6 +154,16 @@ export default function SalaryManager() {
     XLSX.writeFile(workbook, `Sirius_Maas_Raporu_${new Date().toISOString().split('T')[0]}.xlsx`);
   };
 
+  // Dil bazlı yerel format seçici helper fonksiyonu
+  const getLocale = () => {
+    switch (i18n.language) {
+      case 'tr': return 'tr-TR';
+      case 'kz': return 'kk-KZ';
+      case 'ru': return 'ru-RU';
+      default: return 'en-US';
+    }
+  };
+
   if (loading) return <div className="p-8 text-center text-slate-500 font-bold">{t('loading')}</div>;
   if (!isAdmin) return <div className="p-12 text-center text-red-600 font-black">{t('unauthorized')}</div>;
 
@@ -175,7 +185,7 @@ export default function SalaryManager() {
             <label className="text-xs font-black uppercase text-slate-500">{t('date_range')}</label>
             <label className="flex items-center gap-1.5 cursor-pointer">
               <input type="checkbox" checked={dateFilter.isAll} onChange={(e) => setDateFilter({...dateFilter, isAll: e.target.checked})} className="w-4 h-4 text-blue-600 rounded" />
-              <span className="text-xs font-bold text-slate-700">{t('all_dates').split(' ')[0]}</span> {/* Sadece "HEPSİ" kısmını almak için */}
+              <span className="text-xs font-bold text-slate-700">{t('all_dates').split(' ')[0]}</span>
             </label>
           </div>
           {!dateFilter.isAll ? (
@@ -256,8 +266,8 @@ export default function SalaryManager() {
                   <td className="px-4 py-4 font-black text-slate-800">{row.username}</td>
                   <td className="px-4 py-4 font-bold text-amber-600">{row.siteName}</td>
                   <td className="px-4 py-4 font-black text-blue-600 text-center">{row.totalHours}</td>
-                  <td className="px-4 py-4 font-bold text-emerald-600 text-right">{row.hourlyWage.toLocaleString(i18n.language === 'tr' ? 'tr-TR' : 'en-US')} ₸</td>
-                  <td className="px-4 py-4 font-black text-indigo-600 text-right text-lg">{row.totalWage.toLocaleString(i18n.language === 'tr' ? 'tr-TR' : 'en-US')} ₸</td>
+                  <td className="px-4 py-4 font-bold text-emerald-600 text-right">{row.hourlyWage.toLocaleString(getLocale())} ₸</td>
+                  <td className="px-4 py-4 font-black text-indigo-600 text-right text-lg">{row.totalWage.toLocaleString(getLocale())} ₸</td>
                 </tr>
               ))
             )}
