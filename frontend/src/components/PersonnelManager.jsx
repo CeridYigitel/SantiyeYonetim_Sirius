@@ -13,7 +13,6 @@ export default function PersonnelManager() {
   const [editMode, setEditMode] = useState(false);
   const [currentEditingId, setCurrentEditingId] = useState(null);
   
-  // YENİ: formData içine hourlyWage varsayılan olarak 1000 eklendi
   const [formData, setFormData] = useState({ username: '', password: '', role: 'WORKER', supervisorIds: [], hasPurchasingAuthority: false, hourlyWage: 1000 });
 
   const loadData = async () => {
@@ -21,8 +20,8 @@ export default function PersonnelManager() {
     try {
       const token = localStorage.getItem('token');
       const [usersRes, sitesRes] = await Promise.all([
-        axios.get('http://localhost:8080/api/personnel/users/admin/all', { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get('http://localhost:8080/api/operation/sites', { headers: { Authorization: `Bearer ${token}` } })
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/personnel/users/admin/all`, { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/operation/sites`, { headers: { Authorization: `Bearer ${token}` } })
       ]);
       setUsers(usersRes.data); setSites(sitesRes.data);
     } catch (err) {} finally { setLoading(false); }
@@ -56,7 +55,6 @@ export default function PersonnelManager() {
   const handleOpenModal = (user = null) => {
     if (user) {
       setEditMode(true); setCurrentEditingId(user.id);
-      // YENİ: Edit modunda kullanıcının saatlik ücreti yoksa 1000 ata
       setFormData({ 
         username: user.username, 
         password: '', 
@@ -67,7 +65,6 @@ export default function PersonnelManager() {
       });
     } else {
       setEditMode(false); setCurrentEditingId(null);
-      // YENİ: Yeni kayıtta varsayılan 1000 ata
       setFormData({ username: '', password: '', role: 'WORKER', supervisorIds: [], hasPurchasingAuthority: false, hourlyWage: 1000 });
     }
     setIsModalOpen(true);
@@ -85,7 +82,6 @@ export default function PersonnelManager() {
     e.preventDefault();
     const token = localStorage.getItem('token');
     try {
-      // YENİ: Payload içine hourlyWage float olarak eklendi
       const payload = { 
         username: formData.username, 
         role: formData.role, 
@@ -96,8 +92,8 @@ export default function PersonnelManager() {
       
       if (!editMode || (editMode && formData.password)) payload.password = formData.password;
       
-      if (editMode) await axios.put(`http://localhost:8080/api/personnel/users/admin/${currentEditingId}`, payload, { headers: { Authorization: `Bearer ${token}` } });
-      else await axios.post('http://localhost:8080/api/personnel/users/admin/create', payload, { headers: { Authorization: `Bearer ${token}` } });
+      if (editMode) await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/personnel/users/admin/${currentEditingId}`, payload, { headers: { Authorization: `Bearer ${token}` } });
+      else await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/personnel/users/admin/create`, payload, { headers: { Authorization: `Bearer ${token}` } });
       
       setIsModalOpen(false); loadData();
     } catch (err) {}
@@ -107,7 +103,7 @@ export default function PersonnelManager() {
     if (!window.confirm("Emin misiniz?")) return;
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:8080/api/personnel/users/admin/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/personnel/users/admin/${id}`, { headers: { Authorization: `Bearer ${token}` } });
       loadData();
     } catch (err) {}
   };
@@ -128,7 +124,6 @@ export default function PersonnelManager() {
               <th className="px-4 py-4">ID</th>
               <th className="px-4 py-4">{t('username')}</th>
               <th className="px-4 py-4">{t('role')}</th>
-              {/* YENİ KOLON BAŞLIĞI */}
               <th className="px-4 py-4">{t('hourly_wage', 'SAATLİK (₸)')}</th>
               <th className="px-4 py-4">{t('auth')}</th>
               <th className="px-4 py-4">{t('supervisors')}</th>
@@ -142,12 +137,9 @@ export default function PersonnelManager() {
                 <td className="px-4 py-4 font-black text-slate-400">#{u.id}</td>
                 <td className="px-4 py-4 font-bold text-slate-800">{u.username}</td>
                 <td className="px-4 py-4"><span className={`px-3 py-1 rounded-full text-[10px] font-black border ${u.role === 'ADMIN' ? 'bg-purple-100 text-purple-700' : u.role === 'FOREMAN' ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700'}`}>{t(u.role.toLowerCase())}</span></td>
-                
-                {/* YENİ KOLON VERİSİ */}
                 <td className="px-4 py-4 font-bold text-emerald-600 whitespace-nowrap">
                   {u.hourlyWage ? `${u.hourlyWage} ₸` : '1000 ₸'}
                 </td>
-
                 <td className="px-4 py-4">
                   {u.hasPurchasingAuthority ? (
                     <div className="flex items-center gap-1.5 text-emerald-600 font-bold bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 w-max shadow-sm"><span className="text-xs tracking-wider">{t('active')}</span></div>
@@ -157,7 +149,7 @@ export default function PersonnelManager() {
                 <td className="px-4 py-4 font-bold text-amber-600 max-w-[150px] truncate" title={getUserSites(u.id)}>{getUserSites(u.id)}</td>
                 <td className="px-4 py-4 text-right space-x-3">
                   <button onClick={() => handleOpenModal(u)} className="text-blue-600 font-bold">{t('edit')}</button>
-                  <button onClick={() => handleDelete(u.id)} className="text-red-600 font-bold">{t('delete')}</button>
+                  <button onClick={() => handleDelete(id)} className="text-red-600 font-bold">{t('delete')}</button>
                 </td>
               </tr>
             ))}
@@ -186,8 +178,6 @@ export default function PersonnelManager() {
                   <option value="ADMIN">{t('admin')}</option>
                 </select>
               </div>
-
-              {/* YENİ: SAATLİK ÜCRET INPUT'U */}
               <div>
                 <label className="block text-xs font-black uppercase text-slate-500 mb-2">{t('hourly_wage', 'Saatlik Ücret (Tenge)')} *</label>
                 <input 
@@ -201,7 +191,6 @@ export default function PersonnelManager() {
                   placeholder="1000"
                 />
               </div>
-
               <div className="bg-indigo-50 border border-indigo-100 p-4 rounded-xl flex items-center gap-3">
                 <input type="checkbox" id="authCheck" className="w-5 h-5 text-indigo-600 rounded border-indigo-300" checked={formData.role === 'ADMIN' ? true : formData.hasPurchasingAuthority} disabled={formData.role === 'ADMIN'} onChange={(e) => setFormData({...formData, hasPurchasingAuthority: e.target.checked})} />
                 <div>
@@ -236,4 +225,4 @@ export default function PersonnelManager() {
       )}
     </div>
   );
-} 
+}
